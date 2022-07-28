@@ -67,3 +67,12 @@ FROM (SELECT
 		DENSE_RANK() OVER (PARTITION BY house ORDER BY money_earned DESC) as RANK
 	FROM smurfcsv) AS sub 
 WHERE rank <= 3;
+
+
+--Find the average pages partitioned by author--
+SELECT  title, 
+		author_fname,
+		author_lname,
+		pages,
+		ROUND(AVG(pages) OVER(PARTITION BY author_fname,author_lname),0)
+FROM books;

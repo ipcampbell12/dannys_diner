@@ -39,6 +39,19 @@ GROUP BY customer_id;
 
 
 
+/*5. What was the first item purchased after they became members? */
+SELECT customer, item FROM (SELECT mb.customer_id AS customer,
+	mb.join_date, 
+	s.order_date,
+	me.product_name AS item,
+	DENSE_RANK() OVER (PARTITION BY mb.customer_id ORDER BY s.order_date) AS rank
+FROM dannys_diner.members mb
+JOIN dannys_diner.sales s
+ON mb.customer_id = s.customer_id
+JOIN dannys_diner.menu me 
+ON s.product_id = me.product_id
+WHERE s.order_date > mb.join_date) AS sub
+WHERE rank = 1;
 
 
 
