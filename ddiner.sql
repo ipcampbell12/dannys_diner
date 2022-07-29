@@ -54,6 +54,35 @@ WHERE s.order_date > mb.join_date) AS sub
 WHERE rank = 1;
 
 
+/* 6 Which item was purchased just before the customer became a member?*/
+/* Tricky because customer A purchased two items on the same day before he became a member*/
+
+WITH rank_cte AS 
+(SELECT mb.customer_id AS customer,
+		mb.join_date,
+		s.order_date,
+		me.product_name AS item, 
+		DENSE_RANK() OVER (PARTITION BY mb.customer_id ORDER BY s.order_date DESC) as rank
+		FROM dannys_diner.members mb
+		JOIN dannys_diner.sales s
+		ON mb.customer_id = s.customer_id
+		JOIN dannys_diner.menu me 
+		ON s.product_id = me.product_id
+		WHERE s.order_date < mb.join_date) 
+		
+SELECT customer, item FROM rank_cte 
+WHERE rank = 1
+
+--7. What is the total items and amount spent for each member before they became a member?--
+SELECT mb.customer_id,COUNT(s.product_id) AS total_items,SUM(me.price) AS amount_spent
+FROM dannys_diner.members mb 
+JOIN dannys_diner.sales s
+ON mb.customer_id = s.customer_id
+JOIN dannys_diner.menu me 
+ON s.product_id = me.product_id
+WHERE s.order_date < mb.join_date
+GROUP BY mb.customer_id
+ORDER BY mb.customer_id
 
 
 
