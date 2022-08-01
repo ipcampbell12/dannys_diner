@@ -76,3 +76,17 @@ SELECT  title,
 		pages,
 		ROUND(AVG(pages) OVER(PARTITION BY author_fname,author_lname),0)
 FROM books;
+
+
+-- fetch first two employees from each department
+SELECT * FROM (
+ROW_NUMBER OVER (PARTITION BY dept_name ORDER BY emp_id) AS rn
+FROM employees e) AS sub
+WHERE sub.rn <3; 
+
+-- find the tope 3 employees based on salary from each department 
+SELECT * FROM (
+	SELECT e.* 
+	RANK() OVER (PARTITION BY dept_name ORDER BY salary DESC) AS rank
+	FROM employees e) AS sub
+WHERE sub.rank <4;
