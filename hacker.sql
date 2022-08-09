@@ -22,3 +22,13 @@ JOIN friends sf
 ON p.id = sf.id 
 JOIN packages pas
 ON sf.id = pas.id;
+
+
+--find friends' friend
+
+SELECT p.id, p.name,pa.Salary, f.friend_id, pf.name AS friend, pas.salary AS friend_salary FROM people p
+JOIN friends f
+ON p.id = f.id
+JOIN people pf 
+ON f.friend_id = pf.id
+
