@@ -29,3 +29,31 @@ WITH row_cte AS (
 SELECT COUNT(user_id) AS users 
 FROM row_cte 
 WHERE row = 1 AND spend >50;
+
+
+--3 day rolling average of tweets per user
+
+WITH tweets_cte AS (
+SELECT user_id, tweet_date, COUNT(DISTINCT tweet_id) AS tc
+FROM tweets
+GROUP BY user_id, tweet_date) 
+
+SELECT user_id, 
+       tweet_date, 
+      ROUND(AVG(tc) OVER (PARTITION BY user_id ORDER BY tweet_date 
+      ROWS BETWEEN 2 PRECEDING AND CURRENT ROW),2)
+FROM tweets_cte; 
+
+
+
+--average stars per month
+WITH month_cte AS (SELECT EXTRACT(MONTH FROM submit_date) AS month, 
+       product_id AS product,
+       stars 
+FROM reviews) 
+
+SELECT month, 
+       product,
+       ROUND(AVG(stars) OVER (ORDER BY month),2)
+FROM month_cte
+GROUP BY month,product;
