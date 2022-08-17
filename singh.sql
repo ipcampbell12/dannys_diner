@@ -57,6 +57,23 @@ FROM (SELECT EXTRACT(MONTH FROM submit_date) AS month,
       )AS sub
 GROUP BY month,product
 ORDER BY month,product
+
+
+--sending vs. opening snaps 
+
+WITH activity_cte AS(
+      SELECT ab.age_bucket, a.activity_type, SUM(a.time_spent) AS total, 
+      SUM(SUM(a.time_spent)) OVER (PARTITION BY ab.age_bucket) AS total_of_totals
+      FROM activities a 
+      JOIN age_breakdown ab
+      ON a.user_id = ab.user_id
+      WHERE a.activity_type = 'open' OR a.activity_type = 'send'
+      GROUP BY activity_type, age_bucket
+      ORDER BY age_bucket)
+      
+  SELECT age_bucket, 
+         SUM(CASE WHEN activity_type = 'send' THEN ROUND((total/total_of_totals)*100.0,2) END) AS send_perc,
+         SUM(CASE WHEN activity_type = 'open' THEN ROUND((total/total_of_totals)*100.0,2) END) AS open_perc
       
 
 
