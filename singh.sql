@@ -47,13 +47,32 @@ FROM tweets_cte;
 
 
 --average stars per month
-WITH month_cte AS (SELECT EXTRACT(MONTH FROM submit_date) AS month, 
-       product_id AS product,
-       stars 
-FROM reviews) 
 
-SELECT month, 
-       product,
-       ROUND(AVG(stars) OVER (ORDER BY month),2)
-FROM month_cte
-GROUP BY month,product;
+SELECT month,product,ROUND(AVG(avg_stars),2) 
+FROM (SELECT EXTRACT(MONTH FROM submit_date) AS month, 
+      product_id AS product,
+      AVG(stars) AS avg_stars
+      FROM reviews
+      GROUP BY month,product
+      )AS sub
+GROUP BY month,product
+ORDER BY month,product
+      
+
+
+
+
+--user session activity
+WITH rank_cte AS(
+    SELECT user_id, 
+           session_type, 
+           SUM(duration) AS total_duration
+    FROM sessions
+    WHERE start_date BETWEEN '2022-01-01' AND '2022-02-01'
+    GROUP BY user_id,session_type)
+    
+SELECT user_id, 
+       session_type,
+       DENSE_RANK() OVER (PARTITION BY session_type ORDER BY total_duration DESC)
+FROM rank_cte;
+
