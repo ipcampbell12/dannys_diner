@@ -98,3 +98,14 @@ SELECT user_id,
        DENSE_RANK() OVER (PARTITION BY session_type ORDER BY total_duration DESC)
 FROM rank_cte;
 
+
+--linkedin power creators part 1
+
+WITH followers_cte AS (
+  SELECT p.profile_id,p.followers AS personal ,cp.followers  AS company FROM personal_profiles p
+  JOIN company_pages cp
+  ON p.employer_id = cp.company_id)
+  
+SELECT profile_id FROM followers_cte 
+WHERE personal > company
+ORDER BY profile_id
