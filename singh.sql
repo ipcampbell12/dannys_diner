@@ -109,3 +109,16 @@ WITH followers_cte AS (
 SELECT profile_id FROM followers_cte 
 WHERE personal > company
 ORDER BY profile_id
+
+--Third transcation
+WITH row_cte AS (
+  SELECT
+  user_id,
+  spend,
+  transaction_date,
+  ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY transaction_date) AS row
+  FROM transactions
+   )
+
+SELECT user_id,spend, transaction_date FROM row_cte 
+WHERE row = 3;
