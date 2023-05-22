@@ -170,3 +170,14 @@ ORDER BY action_date, t.email_id)
 SELECT user_id
 FROM confirm_cte
 WHERE action-signup = 1
+
+--PHARMACY ANALYTICS (PART 1)
+WITH profit_cte AS (
+  SELECT (total_sales-cogs) AS profit, drug 
+  FROM pharmacy_sales
+  )
+  
+SELECT drug, profit 
+FROM profit_cte 
+ORDER BY profit DESC
+LIMIT 3;
