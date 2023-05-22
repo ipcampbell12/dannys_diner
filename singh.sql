@@ -122,3 +122,18 @@ WITH row_cte AS (
 
 SELECT user_id,spend, transaction_date FROM row_cte 
 WHERE row = 3;
+
+
+--Histogram of tweets 
+WITH count_cte AS(
+  SELECT COUNT(user_id) AS users_num
+  FROM tweets
+  WHERE EXTRACT(YEAR from tweet_date) IN (2022)
+  GROUP BY user_id
+)
+
+SELECT 
+ROW_NUMBER() OVER (ORDER BY COUNT(users_num)) AS tweet_bucket,
+users_num
+FROM count_cte
+GROUP BY users_num;
