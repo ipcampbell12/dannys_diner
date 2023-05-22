@@ -137,3 +137,8 @@ ROW_NUMBER() OVER (ORDER BY COUNT(users_num)) AS tweet_bucket,
 users_num
 FROM count_cte
 GROUP BY users_num;
+
+
+--unfinished parts
+SELECT part, assembly_step FROM parts_assembly
+WHERE finish_date IS NULL;
