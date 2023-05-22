@@ -228,3 +228,20 @@ WITH rankings_cte AS(
 SELECT customer_id FROM rankings_cte 
 GROUP BY customer_id
 HAVING SUM(rankings) = 6
+
+
+--Improved version of previous query using COUNT(DISTINCT product_category)
+WITH supercloud_cte AS( 
+    SELECT 
+      cc.customer_id, 
+      COUNT(DISTINCT product_category) AS category_count
+    FROM customer_contracts cc
+    JOIN products p
+    ON cc.product_id = p.product_id
+    GROUP BY cc.customer_id
+    ORDER BY customer_id
+)
+
+  SELECT customer_id 
+  FROM supercloud_cte
+  WHERE category_count = 3 
