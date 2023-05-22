@@ -181,3 +181,21 @@ SELECT drug, profit
 FROM profit_cte 
 ORDER BY profit DESC
 LIMIT 3;
+
+--PHARMACY ANALYTICS (PART 2)
+
+WITH order_cte AS(
+  WITH profit_cte AS(
+    SELECT drug, manufacturer, (total_sales-cogs) AS profit 
+    FROM pharmacy_sales
+    )
+  
+  SELECT manufacturer, COUNT(drug) AS drug_count, SUM(ABS(profit)) AS total_loss
+  FROM profit_cte 
+  WHERE profit < 0
+  GROUP BY manufacturer
+  )
+
+SELECT manufacturer, drug_count, total_loss
+FROM order_cte
+ORDER BY total_loss DESC
