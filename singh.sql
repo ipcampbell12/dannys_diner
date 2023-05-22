@@ -199,3 +199,32 @@ WITH order_cte AS(
 SELECT manufacturer, drug_count, total_loss
 FROM order_cte
 ORDER BY total_loss DESC
+
+--super cloud customer
+WITH rankings_cte AS(
+  WITH supercloud_cte AS( 
+    SELECT 
+      cc.customer_id, 
+      cc.product_id,
+      p.product_category, 
+      p.product_name,
+      COUNT(p.product_category) OVER(PARTITION BY cc.customer_id) AS category_count
+    FROM customer_contracts cc
+    JOIN products p
+    ON cc.product_id = p.product_id
+    ORDER BY customer_id
+    )
+  
+  SELECT 
+    customer_id, 
+    product_category, 
+    DENSE_RANK() OVER (ORDER BY product_category) AS rankings,
+    category_count
+  FROM supercloud_cte
+  WHERE category_count =3 
+  ORDER BY customer_id
+)
+
+SELECT customer_id FROM rankings_cte 
+GROUP BY customer_id
+HAVING SUM(rankings) = 6
