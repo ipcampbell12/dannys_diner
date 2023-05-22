@@ -142,3 +142,31 @@ GROUP BY users_num;
 --unfinished parts
 SELECT part, assembly_step FROM parts_assembly
 WHERE finish_date IS NULL;
+
+
+--app-ctr
+
+SELECT
+  app_id,
+  ROUND(100.0*
+  SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END)/
+  SUM(CASE WHEN event_type = 'impression' THEN 1 ELSE 0 END),2) AS ctr_rate
+FROM events
+WHERE timestamp BETWEEN '1/1/2022' AND '12/31/2022'
+GROUP BY app_id
+
+
+--second day confirmation
+
+WITH confirm_cte AS(SELECT
+    e.user_id, 
+    DATE_PART('DAY', e.signup_date) AS signup,
+    DATE_PART('DAY', t.action_date) AS action
+FROM emails e
+JOIN texts t
+ON e.email_id = t.email_id
+ORDER BY action_date, t.email_id)
+
+SELECT user_id
+FROM confirm_cte
+WHERE action-signup = 1
