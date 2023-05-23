@@ -184,7 +184,7 @@ LIMIT 3;
 
 --PHARMACY ANALYTICS (PART 2)
 
-WITH order_cte AS(
+
   WITH profit_cte AS(
     SELECT drug, manufacturer, (total_sales-cogs) AS profit 
     FROM pharmacy_sales
@@ -194,11 +194,8 @@ WITH order_cte AS(
   FROM profit_cte 
   WHERE profit < 0
   GROUP BY manufacturer
-  )
+  ORDER BY total_loss
 
-SELECT manufacturer, drug_count, total_loss
-FROM order_cte
-ORDER BY total_loss DESC
 
 --super cloud customer
 WITH rankings_cte AS(
