@@ -250,3 +250,14 @@ SELECT
 FROM emails e 
 LEFT JOIN texts t
 ON e.email_id = t.email_id AND t.signup_action = 'Confirmed'
+
+--Pharmacy analytics part III
+WITH million_cte AS( 
+    SELECT manufacturer, SUM(total_sales) AS sale
+    FROM pharmacy_sales
+    GROUP BY manufacturer
+    ORDER BY sale DESC
+  )
+
+SELECT manufacturer, CONCAT('$',ROUND(ROUND(sale, -6)/1000000,0),' million') AS sales_mil
+FROM million_cte
