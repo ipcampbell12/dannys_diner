@@ -261,3 +261,11 @@ WITH million_cte AS(
 
 SELECT manufacturer, CONCAT('$',ROUND(ROUND(sale, -6)/1000000,0),' million') AS sales_mil
 FROM million_cte
+
+
+--DATA SCIENCE SKILLS
+SELECT candidate_id FROM candidates
+WHERE skill IN ('Python','Tableau','PostgreSQL')
+GROUP BY candidate_id
+HAVING COUNT(skill)=3
+ORDER BY candidate_id;
