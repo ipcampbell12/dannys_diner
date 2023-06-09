@@ -276,8 +276,6 @@ WITH count_cte AS(
     WITH user_cte AS(
         SELECT 
           user_id,
-          event_id,
-          event_type, 
           DATE_PART('month',event_date) AS cur_month
         FROM user_actions
         ORDER BY user_id
