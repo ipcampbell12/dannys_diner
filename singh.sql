@@ -269,3 +269,26 @@ WHERE skill IN ('Python','Tableau','PostgreSQL')
 GROUP BY candidate_id
 HAVING COUNT(skill)=3
 ORDER BY candidate_id;
+
+
+--Walmar sales
+WITH count_cte AS(
+    WITH user_cte AS(
+        SELECT 
+          user_id,
+          event_id,
+          event_type, 
+          DATE_PART('month',event_date) AS cur_month
+        FROM user_actions
+        ORDER BY user_id
+      )
+      
+          SELECT  user_id, (SELECT MAX(cur_month) FROM user_cte) AS month FROM user_cte 
+          WHERE cur_month IN (6,7)
+          GROUP BY user_id
+          HAVING COUNT( DISTINCT cur_month) = 2
+      )
+    
+    SELECT month,COUNT(user_id) AS monthly_active_users FROM count_cte
+    GROUP BY month
+
